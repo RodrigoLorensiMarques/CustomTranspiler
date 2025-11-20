@@ -1,0 +1,4 @@
+printi "Hello";
+x = 10;
+y = x + 20;
+printi "Fim";
