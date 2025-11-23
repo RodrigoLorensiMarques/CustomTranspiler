@@ -1,4 +1,17 @@
-printi "Hello";
+
 x = 10;
 y = x + 20;
-printi "Fim";
+
+
+voidi funkition digaOi (){
+    printi "Hello";
+}
+
+uail(1<5){
+
+    funkition()
+}
+
+ifi (x =30){
+    funkition()
+}
