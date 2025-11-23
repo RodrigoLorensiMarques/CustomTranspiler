@@ -18,6 +18,24 @@ printi     { return PRINT; }
 voidi      { return VOID; }
 funkition  { return FUNCTION; }
 
+"=="       { return EQ; }
+"!="       { return NE; }
+"<"        { return LT; }
+">"        { return GT; }
+"<="       { return LE; }
+">="       { return GE; }
+
+"("        { return '('; }
+")"        { return ')'; }
+"{"        { return '{'; }
+"}"        { return '}'; }
+"="        { return '='; }
+";"        { return ';'; }
+"+"        { return '+'; }
+"-"        { return '-'; }
+"*"        { return '*'; }
+"/"        { return '/'; }
+
 [a-zA-Z_][a-zA-Z0-9_]* { 
     yylval.sval = strdup(yytext); 
     return ID; 
@@ -34,14 +52,6 @@ funkition  { return FUNCTION; }
     yylval.sval = str;
     return STRING;
 }
-
-"("        { return '('; }
-")"        { return ')'; }
-"{"        { return '{'; }
-"}"        { return '}'; }
-"="        { return '='; }
-";"        { return ';'; }
-"+"        { return '+'; }
 
 [ \t\r\n]+ { /* ignore */ }
 .          { /* ignore */ }

@@ -7,6 +7,9 @@ FILE *out;
 extern int yylex();
 extern FILE *yyin;
 void yyerror(const char *s);
+
+int in_function = 0;
+int in_control = 0;
 %}
 
 %union {
@@ -15,10 +18,11 @@ void yyerror(const char *s);
 }
 
 %token IF ELSE FOR WHILE PRINT VOID FUNCTION
+%token EQ NE LT GT LE GE
 %token <sval> ID STRING
 %token <ival> NUM
 
-%type <sval> expr
+%type <sval> expr condicao
 
 %%
 
@@ -33,22 +37,90 @@ lista_comandos:
 
 comando:
     PRINT STRING ';' {
-        fprintf(out, "echo \"%s\";\n", $2);
+        if (in_function || in_control) {
+            fprintf(out, "    echo \"%s\";\n", $2);
+        } else {
+            fprintf(out, "echo \"%s\";\n", $2);
+        }
         free($2);
     }
     | ID '=' expr ';' {
-        fprintf(out, "$%s = %s;\n", $1, $3);
+        if (in_function || in_control) {
+            fprintf(out, "    $%s = %s;\n", $1, $3);
+        } else {
+            fprintf(out, "$%s = %s;\n", $1, $3);
+        }
         free($1);
         free($3);
     }
-    | VOID FUNCTION ID '(' ')' '{' lista_comandos '}' {
+    | VOID FUNCTION ID '(' ')' '{' {
         fprintf(out, "function %s() {\n", $3);
         free($3);
-        // Os comandos dentro da função já foram impressos
+        int old_in_function = in_function;
+        in_function = 1;
+    } lista_comandos '}' {
         fprintf(out, "}\n");
+        in_function = 0;
     }
     | ID '(' ')' ';' {
-        fprintf(out, "%s();\n", $1);
+        if (in_function || in_control) {
+            fprintf(out, "    %s();\n", $1);
+        } else {
+            fprintf(out, "%s();\n", $1);
+        }
+        free($1);
+    }
+    | WHILE '(' condicao ')' '{' {
+        fprintf(out, "while (%s) {\n", $3);
+        free($3);
+        int old_in_control = in_control;
+        in_control = 1;
+    } lista_comandos '}' {
+        fprintf(out, "}\n");
+        in_control = 0;
+    }
+    | IF '(' condicao ')' '{' {
+        fprintf(out, "if (%s) {\n", $3);
+        free($3);
+        int old_in_control = in_control;
+        in_control = 1;
+    } lista_comandos '}' {
+        fprintf(out, "}\n");
+        in_control = 0;
+    }
+    ;
+
+condicao:
+    expr LT expr {
+        char *cond = malloc(strlen($1) + strlen($3) + 10);
+        sprintf(cond, "%s < %s", $1, $3);
+        $$ = cond;
+        free($1);
+        free($3);
+    }
+    | expr GT expr {
+        char *cond = malloc(strlen($1) + strlen($3) + 10);
+        sprintf(cond, "%s > %s", $1, $3);
+        $$ = cond;
+        free($1);
+        free($3);
+    }
+    | expr EQ expr {
+        char *cond = malloc(strlen($1) + strlen($3) + 10);
+        sprintf(cond, "%s == %s", $1, $3);
+        $$ = cond;
+        free($1);
+        free($3);
+    }
+    | NUM {
+        char *cond = malloc(20);
+        sprintf(cond, "%d", $1);
+        $$ = cond;
+    }
+    | ID {
+        char *cond = malloc(strlen($1) + 2);
+        sprintf(cond, "$%s", $1);
+        $$ = cond;
         free($1);
     }
     ;
@@ -62,6 +134,11 @@ expr:
     | ID {
         $$ = malloc(strlen($1) + 2);
         sprintf($$, "$%s", $1);
+        free($1);
+    }
+    | STRING {
+        $$ = malloc(strlen($1) + 3);
+        sprintf($$, "\"%s\"", $1);
         free($1);
     }
     | expr '+' expr {
@@ -96,6 +173,8 @@ int main(int argc, char **argv) {
     }
     
     yyin = f;
+    in_function = 0;
+    in_control = 0;
     yyparse();
     
     fprintf(out, "?>\n");

@@ -1,17 +1,14 @@
-
 x = 10;
 y = x + 20;
-
 
 voidi funkition digaOi (){
     printi "Hello";
 }
 
 uail(1<5){
-
-    funkition()
+    digaOi();
 }
 
-ifi (x =30){
-    funkition()
+ifi (x == 30){
+    digaOi();
 }

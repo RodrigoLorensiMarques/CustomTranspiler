@@ -61,9 +61,15 @@ extern int yydebug;
     PRINT = 262,                   /* PRINT  */
     VOID = 263,                    /* VOID  */
     FUNCTION = 264,                /* FUNCTION  */
-    ID = 265,                      /* ID  */
-    STRING = 266,                  /* STRING  */
-    NUM = 267                      /* NUM  */
+    EQ = 265,                      /* EQ  */
+    NE = 266,                      /* NE  */
+    LT = 267,                      /* LT  */
+    GT = 268,                      /* GT  */
+    LE = 269,                      /* LE  */
+    GE = 270,                      /* GE  */
+    ID = 271,                      /* ID  */
+    STRING = 272,                  /* STRING  */
+    NUM = 273                      /* NUM  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -79,20 +85,26 @@ extern int yydebug;
 #define PRINT 262
 #define VOID 263
 #define FUNCTION 264
-#define ID 265
-#define STRING 266
-#define NUM 267
+#define EQ 265
+#define NE 266
+#define LT 267
+#define GT 268
+#define LE 269
+#define GE 270
+#define ID 271
+#define STRING 272
+#define NUM 273
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "main.y"
+#line 15 "main.y"
 
     int ival;
     char *sval;
 
-#line 96 "y.tab.h"
+#line 108 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
