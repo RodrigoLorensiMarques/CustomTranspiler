@@ -14,7 +14,7 @@ void yyerror(const char *s);
     char *sval;
 }
 
-%token IF ELSE FOR WHILE PRINT
+%token IF ELSE FOR WHILE PRINT VOID FUNCTION
 %token <sval> ID STRING
 %token <ival> NUM
 
@@ -41,6 +41,16 @@ comando:
         free($1);
         free($3);
     }
+    | VOID FUNCTION ID '(' ')' '{' lista_comandos '}' {
+        fprintf(out, "function %s() {\n", $3);
+        free($3);
+        // Os comandos dentro da função já foram impressos
+        fprintf(out, "}\n");
+    }
+    | ID '(' ')' ';' {
+        fprintf(out, "%s();\n", $1);
+        free($1);
+    }
     ;
 
 expr:
@@ -52,11 +62,6 @@ expr:
     | ID {
         $$ = malloc(strlen($1) + 2);
         sprintf($$, "$%s", $1);
-        free($1);
-    }
-    | STRING {
-        $$ = malloc(strlen($1) + 3);
-        sprintf($$, "\"%s\"", $1);
         free($1);
     }
     | expr '+' expr {
@@ -77,7 +82,7 @@ int main(int argc, char **argv) {
     
     out = fopen("saida.php", "w");
     if (!out) {
-        perror("Erro criando saída");
+        perror("Erro criando saida");
         return 1;
     }
     

@@ -10,18 +10,20 @@ int yywrap(void) {
 
 %%
 
-ifi     { return IF; }
-elsi    { return ELSE; }
-for     { return FOR; }
-uail    { return WHILE; }
-printi  { return PRINT; }
+ifi        { return IF; }
+elsi       { return ELSE; }
+for        { return FOR; }
+uail       { return WHILE; }
+printi     { return PRINT; }
+voidi      { return VOID; }
+funkition  { return FUNCTION; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { 
     yylval.sval = strdup(yytext); 
     return ID; 
 }
 
-[0-9]+  { 
+[0-9]+     { 
     yylval.ival = atoi(yytext); 
     return NUM; 
 }
@@ -33,13 +35,15 @@ printi  { return PRINT; }
     return STRING;
 }
 
-"="     { return '='; }
-";"     { return ';'; }
-"+"     { return '+'; }
-"("     { return '('; }
-")"     { return ')'; }
+"("        { return '('; }
+")"        { return ')'; }
+"{"        { return '{'; }
+"}"        { return '}'; }
+"="        { return '='; }
+";"        { return ';'; }
+"+"        { return '+'; }
 
-[ \t\r\n]+   { /* ignore */ }
-.       { /* ignore */ }
+[ \t\r\n]+ { /* ignore */ }
+.          { /* ignore */ }
 
 %%
