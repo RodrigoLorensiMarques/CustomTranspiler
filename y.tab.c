@@ -1602,13 +1602,11 @@ yyreturn:
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        printf("Uso: %s arquivo_entrada\n", argv[0]);
         return 1;
     }
     
-    out = fopen("saida.php", "w");
+    out = fopen("output.php", "w");
     if (!out) {
-        perror("Erro criando saida");
         return 1;
     }
     
@@ -1616,7 +1614,6 @@ int main(int argc, char **argv) {
     
     FILE *f = fopen(argv[1], "r");
     if (!f) {
-        perror("Erro abrindo arquivo de entrada");
         fclose(out);
         return 1;
     }
@@ -1634,5 +1631,4 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro de sintaxe: %s\n", s);
 }
