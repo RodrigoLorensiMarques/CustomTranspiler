@@ -182,4 +182,5 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
 }
